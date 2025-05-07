@@ -7,16 +7,20 @@ import { PageContainer } from '@toolpad/core/PageContainer';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
 import GroupsIcon from '@mui/icons-material/Groups';
-import EventIcon from '@mui/icons-material/Event';
+
 import logoImg from '../assets/PatientJournal_Logo.png';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 import PageContentController from '../components/PageContentController';
+import PageHeaderController from '../components/PageHeaderController';
+
+
 
 const NAVIGATION: Navigation = [
   { kind: 'header', title: 'Main items' },
   { segment: 'profile', title: 'Profile', icon: <PersonIcon /> },
   { segment: '', title: 'Dashboard', icon: <DashboardIcon /> },
   { segment: 'patients', title: 'Patients', icon: <GroupsIcon /> },
-  { segment: 'careplans', title: 'CarePlans', icon: <EventIcon /> },
+  { segment: 'careplans', title: 'CarePlans', icon: <PostAddIcon /> },
   { kind: 'divider' },
 ];
 
@@ -61,8 +65,8 @@ export default function DashboardLayoutBasic() {
       theme={theme}
     >
       <DashboardLayout defaultSidebarCollapsed>
-        <PageContainer>
-          <PageContentController router={router} />
+        <PageContainer slots={{ header: () => <PageHeaderController router={router} /> }}>
+            <PageContentController router={router} />
         </PageContainer>
       </DashboardLayout>
     </AppProvider>
