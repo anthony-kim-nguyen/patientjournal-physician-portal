@@ -66,12 +66,14 @@ export default function Login() {
       console.log('Login successful:', loginRes.data);
 
       Cookies.set('access_token', loginRes.data.access_token, {
-        secure: true,
+        secure: window.location.protocol === 'https:',
         sameSite: 'Strict',
         expires: 1,
       });
-
+      
+      console.log('🔁 Redirecting to /dashboard');
       navigate('/dashboard');
+      console.log('🔁 done redirecting to  /dashboard');
     } catch (err: any) {
       console.error('Auth failed:', err);
       if (err.response) {
