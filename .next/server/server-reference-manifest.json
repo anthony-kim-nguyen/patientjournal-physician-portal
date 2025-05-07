@@ -1,0 +1,17 @@
+{
+  "node": {
+    "706be4fece138332b778ca2624c596a69d3b0e2704": {
+      "workers": {
+        "app/auth/signin/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fanthonynguyen%2FDocuments%2FGitHub%2Fpatientjournal-physician-portal%2Fapp%2Fauth%2Fsignin%2Factions.ts%22%2C%5B%7B%22id%22%3A%22706be4fece138332b778ca2624c596a69d3b0e2704%22%2C%22exportedName%22%3A%22default%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/auth/signin/page": "rsc"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "QMSPVgUjtwHynM2J/md/5vD3DRF30JH3N92gvdo14Xo="
+}
