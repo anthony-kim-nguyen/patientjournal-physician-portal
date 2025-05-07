@@ -8,7 +8,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
 import GroupsIcon from '@mui/icons-material/Groups';
 import EventIcon from '@mui/icons-material/Event';
-
+import logoImg from '../assets/PatientJournal_Logo.png';
 import PageContentController from '../components/PageContentController';
 
 const NAVIGATION: Navigation = [
@@ -53,7 +53,7 @@ export default function DashboardLayoutBasic() {
   return (
     <AppProvider
       branding={{
-        logo: <img src="/assets/PatientJournal_Logo.png" alt="PatientJournal logo" style={{ height: 40 }} />,
+        logo: <img src={logoImg} alt="PatientJournal logo" style={{ height: 100, width: 'auto' }}/>,
         title: 'PatientJournal',
       }}
       navigation={NAVIGATION}
