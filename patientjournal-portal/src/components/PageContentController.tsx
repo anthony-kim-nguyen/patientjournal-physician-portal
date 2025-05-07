@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-
+import Profile from "../pages/Profile";
 import { type Router } from '@toolpad/core/AppProvider';
 
 
@@ -19,7 +19,7 @@ export default function PageContentController({ router }: PageContentControllerP
   //   );
   // }
     switch(pathname){
-      case '/':
+      case '/profile':
         return (
           <Box
           sx={{
@@ -30,7 +30,7 @@ export default function PageContentController({ router }: PageContentControllerP
             textAlign: 'center',
           }}
         >
-          
+          <Profile/>
         </Box>
           
         

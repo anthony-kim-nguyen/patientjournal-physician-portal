@@ -1,129 +1,163 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import axios from 'axios';
-
-const API_BASE_URL = 'https://eh7tt3obg4.execute-api.us-west-1.amazonaws.com';
-//const API_BASE_URL = 'http://192.168.4.29:8000';
-
-export default function Login() {
-  const navigate = useNavigate();
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [form, setForm] = useState({
-    username: '',
-    password: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-  });
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    const token = Cookies.get('access_token');
-    if (token) {
-      console.log('Token exists, redirecting to dashboard');
-      navigate('/dashboard');
-    }
-  }, []);
-
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [field]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    try {
-      console.log('Submitting form:', form);
-
-      if (isRegistering) {
-        console.log('Registering user...');
-        console.log(`${API_BASE_URL}/register`);
-        const regRes = await axios.post(`${API_BASE_URL}/register`, {
-          username: form.username,
-          password: form.password,
-          email: form.email,
-          role: 'practitioner',
-          first_name: form.firstName,
-          last_name: form.lastName,
-          
-        },{withCredentials: true,});
-        console.log('Registration successful:', regRes.data);
+import {
+    Container,
+    SignInContainer,
+    SignUpContainer,
+    Form,
+    Title,
+    Input,
+    Button,
+    GhostButton,
+    OverlayContainer,
+    Overlay,
+    LeftOverlayPanel,
+    RightOverlayPanel,
+    Paragraph,
+  } from '../components/LoginComponents';
+  import { useState, useEffect } from 'react';
+  import { useNavigate } from 'react-router-dom';
+  import Cookies from 'js-cookie';
+  import axios from 'axios';
+  import { API_BASE_URL } from '../api/config';
+  import { Box } from '@mui/material';
+  
+  export default function Login() {
+    const navigate = useNavigate();
+  
+    // State to toggle between sign-in and sign-up views
+    const [isRegistering, setIsRegistering] = useState(false);
+  
+    // Form field state
+    const [form, setForm] = useState({
+      username: '',
+      password: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+    });
+  
+    // Error message
+    const [error, setError] = useState('');
+  
+    // Check for existing token and redirect if logged in
+    useEffect(() => {
+      const token = Cookies.get('access_token');
+      if (token) {
+        console.log('Token exists, redirecting to dashboard');
+        navigate('/dashboard');
       }
-
-      console.log('Logging in...');
-      const params = new URLSearchParams();
-      params.append('grant_type', 'password');
-      params.append('username', form.username);
-      params.append('password', form.password);
-
-      const loginRes = await axios.post(`${API_BASE_URL}/token`, params, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        withCredentials: true,
-      });
-
-      console.log('Login successful:', loginRes.data);
-
-      Cookies.set('access_token', loginRes.data.access_token, {
-        secure: window.location.protocol === 'https:',
-        sameSite: 'Strict',
-        expires: 1,
-      });
+    }, []);
+  
+    // Update form field
+    const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setForm({ ...form, [field]: e.target.value });
+    };
+  
+    // Handle login or registration
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setError('');
+  
+      try {
+        // Register new user if in registration mode
+        if (isRegistering) {
+          await axios.post(
+            `${API_BASE_URL}/register`,
+            {
+              username: form.username,
+              password: form.password,
+              email: form.email,
+              role: 'practitioner',
+              first_name: form.firstName,
+              last_name: form.lastName,
+            },
+            { withCredentials: true }
+          );
+        }
+  
+        // Login request
+        const params = new URLSearchParams();
+        params.append('grant_type', 'password');
+        params.append('username', form.username);
+        params.append('password', form.password);
+  
+        const loginRes = await axios.post(`${API_BASE_URL}/token`, params, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          withCredentials: true,
+        });
+  
+        // Store token in secure cookie
+        Cookies.set('access_token', loginRes.data.access_token, {
+          secure: window.location.protocol === 'https:',
+          sameSite: 'Strict',
+          expires: 1,
+        });
+  
+        // Redirect after login
+        navigate('/dashboard');
+      } catch (err: any) {
+        console.error('Auth failed:', err);
+        setError(err.response?.data?.detail || 'Authentication failed');
+      }
+    };
+  
+    return (
+        <Box
+            sx={{
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(to right, #ffffff, #acb6e5)', // optional
+            }}
+        >
       
-      console.log('🔁 Redirecting to /dashboard');
-      navigate('/dashboard');
-      console.log('🔁 done redirecting to  /dashboard');
-    } catch (err: any) {
-      console.error('Auth failed:', err);
-      if (err.response) {
-        console.error('Error response:', err.response.data);
-        setError(err.response.data?.detail || 'Authentication failed');
-      } else {
-        setError('Unexpected error occurred');
-      }
-    }
-  };
-
-  return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ display: 'flex', flexDirection: 'column', width: 300, margin: 'auto', mt: 10 }}
-    >
-      <Typography variant="h5" textAlign="center" mb={2}>
-        {isRegistering ? 'Register' : 'Login'}
-      </Typography>
-
-      <TextField label="Username" value={form.username} onChange={handleChange('username')} required />
-      <TextField
-        label="Password"
-        type="password"
-        value={form.password}
-        onChange={handleChange('password')}
-        required
-        sx={{ mt: 2 }}
-      />
-      {isRegistering && (
-        <>
-          <TextField label="Email" value={form.email} onChange={handleChange('email')} sx={{ mt: 2 }} required />
-          <TextField label="First Name" value={form.firstName} onChange={handleChange('firstName')} sx={{ mt: 2 }} required />
-          <TextField label="Last Name" value={form.lastName} onChange={handleChange('lastName')} sx={{ mt: 2 }} required />
-        </>
-      )}
-
-      <Button type="submit" variant="contained" sx={{ mt: 3 }}>
-        {isRegistering ? 'Register & Login' : 'Login'}
-      </Button>
-      <Button onClick={() => setIsRegistering(!isRegistering)} sx={{ mt: 1 }}>
-        {isRegistering ? 'Already have an account? Login' : 'New user? Register'}
-      </Button>
-
-      {error && (
-        <Typography color="error" textAlign="center" mt={2}>
-          {error}
-        </Typography>
-      )}
-    </Box>
-  );
-}
+            <Container>
+                {/* Sign-Up Form */}
+                <SignUpContainer signinIn={!isRegistering}>
+                <Form onSubmit={handleSubmit}>
+                    <Title>Create Account</Title>
+                    <Input placeholder="Username" value={form.username} onChange={handleChange('username')} required />
+                    <Input type="password" placeholder="Password" value={form.password} onChange={handleChange('password')} required />
+                    <Input placeholder="Email" value={form.email} onChange={handleChange('email')} required />
+                    <Input placeholder="First Name" value={form.firstName} onChange={handleChange('firstName')} required />
+                    <Input placeholder="Last Name" value={form.lastName} onChange={handleChange('lastName')} required />
+                    <Button type="submit">Register & Login</Button>
+                    {error && <Paragraph style={{ color: 'red' }}>{error}</Paragraph>}
+                </Form>
+                </SignUpContainer>
+        
+                {/* Sign-In Form */}
+                <SignInContainer signinIn={!isRegistering}>
+                <Form onSubmit={handleSubmit}>
+                    <Title>Welcome Back</Title>
+                    <Input placeholder="Username" value={form.username} onChange={handleChange('username')} required />
+                    <Input type="password" placeholder="Password" value={form.password} onChange={handleChange('password')} required />
+                    <Button type="submit">Login</Button>
+                    {error && <Paragraph style={{ color: 'red' }}>{error}</Paragraph>}
+                </Form>
+                </SignInContainer>
+        
+                {/* Overlay with branding / switching panel */}
+                <OverlayContainer signinIn={!isRegistering}>
+                <Overlay signinIn={!isRegistering}>
+                    {/* Left overlay for switching to sign-in */}
+                    <LeftOverlayPanel signinIn={!isRegistering}>
+                    <Title>Already Registered?</Title>
+                    <Paragraph>Sign in with your credentials</Paragraph>
+                    <GhostButton onClick={() => setIsRegistering(false)}>Sign In</GhostButton>
+                    </LeftOverlayPanel>
+        
+                    {/* Right overlay for switching to sign-up */}
+                    <RightOverlayPanel signinIn={!isRegistering}>
+                    <Title>New Here?</Title>
+                    <Paragraph>Register with us to get started</Paragraph>
+                    <GhostButton onClick={() => setIsRegistering(true)}>Register</GhostButton>
+                    </RightOverlayPanel>
+                </Overlay>
+                </OverlayContainer>
+            </Container>
+        </Box>
+    );
+  }
+  
