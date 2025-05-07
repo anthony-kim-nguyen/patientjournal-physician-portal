@@ -14,7 +14,7 @@ import PageContentController from '../components/PageContentController';
 const NAVIGATION: Navigation = [
   { kind: 'header', title: 'Main items' },
   { segment: 'profile', title: 'Profile', icon: <PersonIcon /> },
-  { segment: '', title: 'patient-journal', icon: <DashboardIcon /> },
+  { segment: '', title: 'Dashboard', icon: <DashboardIcon /> },
   { segment: 'patients', title: 'Patients', icon: <GroupsIcon /> },
   { segment: 'careplans', title: 'CarePlans', icon: <EventIcon /> },
   { kind: 'divider' },
@@ -54,7 +54,7 @@ export default function DashboardLayoutBasic() {
     <AppProvider
       branding={{
         logo: <img src="/assets/PatientJournal_Logo.png" alt="PatientJournal logo" style={{ height: 40 }} />,
-        title: 'MarcosMeet',
+        title: 'PatientJournal',
       }}
       navigation={NAVIGATION}
       router={router}
