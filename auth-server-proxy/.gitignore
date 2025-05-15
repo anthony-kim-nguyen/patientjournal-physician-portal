@@ -1,0 +1,56 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+
+# macOS / Linux
+.DS_Store
+*.swp
+
+# VSCode or JetBrains settings
+.vscode/
+.idea/
+
+# Python environment/IDE
+*.egg-info/
+.eggs/
+*.log
+
+# SAM build artifacts
+.aws-sam/
+
+# AWS credentials and config
+*.pem
+*.key
+.aws/
+
+# Local env variables
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# Package distributions
+dist/
+build/
+*.whl
+
+# Coverage reports
+htmlcov/
+coverage.xml
+*.cover
+*.py,cover
+.cache/
+
+# Node modules (if frontend exists)
+node_modules/
+
+# Terraform or other cloud tooling
+*.tfstate*
+.terraform/

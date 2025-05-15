@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for FastAPI app deployed on Lambda using HTTP API with CORS.
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: python3.11
+    Architectures: [x86_64]
+
+Resources:
+  FastApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PatientJournal-fhir-proxy-auth-api
+      CodeUri: .
+      Handler: main.handler
+      MemorySize: 512
+      Environment:
+        Variables:
+          FHIR_JPA_URL: "http://52.53.216.247:8080/fhir"
+          DATABASE_URL: "postgresql://postgres:password@patientjournal-db.cpiokwkoc705.us-west-1.rds.amazonaws.com:5432/fhirehr"
+          JWT_SECRET_KEY: "mytopsecretkey"
+          JWT_ALGORITHM: "HS256"
+          ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            ApiId: !Ref FastApiHttpApi
+    Metadata:
+      BuildMethod: python3.11
+
+
+  FastApiHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        AllowHeaders: ["*"]
+        AllowOrigins: ["*"]
+
+Outputs:
+  ApiUrl:
+    Description: "HTTP API endpoint"
+    Value: !Sub "https://${FastApiHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
